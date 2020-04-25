@@ -1,68 +1,102 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# React Redux
 
-## Available Scripts
+Переходим к самой ожидаемой части — интеграции Redux с React. Сразу скажу, что дело это не простое и не всегда понятное. Поэтому действовать будем по следующей схеме: я покажу пошагово как скрестить ежа с ужом без погружения в детали, а в дальнейших уроках мы разберёмся что да как.
 
-In the project directory, you can run:
+Команда Redux создала библиотеку [react-redux](https://react-redux.js.org/introduction/quick-start), которая значительно упрощает привязку Redux к React. Далее мы пройдём все этапы по её подключению к React-проекту.
 
-### `npm start`
+![React Redux](https://cdn2.hexlet.io/derivations/image/original/eyJpZCI6IjkxYzliMWE4Mjg0MjE5YjkzZmJjMzU1MWRjYTUwYmUyLmpwZyIsInN0b3JhZ2UiOiJjYWNoZSJ9?signature=dc5e753abe2eb12afc1dd6b10e85b1daa477e54e29e3fd491933b8062ee71ae1)
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+_Редьюсеры и действия в этом руководстве не описываются. Их структура не зависит от того, с чем интегрируется Redux._
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+## Провайдер
 
-### `npm test`
+Провайдер — React-компонент, который делает Redux-контейнер доступным для всего приложения. Он находится на верхнем уровне JSX и "оборачивает" в себя все остальные компоненты.
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+    import React from 'react';
+    import { render } from 'react-dom';
+    import { Provider } from 'react-redux'; // импорт компонента!
+    import TasksBox from './components/TasksBox.jsx';
+    import reducers from './reducers.jsx'
 
-### `npm run build`
+    // Контейнер передаётся в провайдер
+    const store = createStore(reducers);
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+    render(
+      <Provider store={store}>
+        <TasksBox />
+      </Provider>,
+      document.getElementById('container'),
+    );
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+Провайдер кроме прочего, выполняет подписку через `store.subscribe`. Это значит, что больше не придётся беспокоиться об обновлении приложения при изменении данных внутри контейнера.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## connect
 
-### `npm run eject`
+Пакет _react-redux_ предоставляет функцию `connect`. Она связывает данные из контейнера со свойствами конкретного компонента.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+    // components/TasksBox.jsx
+    import React from 'react';
+    import { connect } from 'react-redux';
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+    // Эта функция, берет нужные данные из контейнера и отдаёт их компоненту
+    // Компоненту TasksBox нужны задачи
+    const mapStateToProps = state => {
+      const props = {
+        tasks: state.tasks,
+      }
+      return props;
+    };
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+    class TasksBox extends React.Component {
+      render() {
+        // Извлекаем задачи из свойств
+        const { tasks } = this.props;
+        // Отрисовываем задачи
+      }
+    }
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+    // connect соединяет контейнер с текущим компонентом
+    // Наружу экспортируется компонент, который используется как обычно (пример выше)
+    export default connect(mapStateToProps)(TasksBox);
 
-## Learn More
+Самое главное в этой схеме — функция `mapStateToProps`. Эта функция принимает на вход состояние из контейнера и должна возвратить объект, свойства которого станут `props` в подключаемом компоненте (в данном случае `<TasksBox>`). В тривиальном случае мы всегда можем реализовывать эту функцию так `state => state`. То есть берём и отдаём в компонент всё состояние. Но делать так не стоит по многим причинам, начиная от полной просадки производительности, заканчивая тем, что появляется сильная зависимость от структуры состояния и лишние данные там, где их не ждут. Более того, всю предварительную обработку данных, подготовленных для вывода, стоит делать именно здесь. В идеале в компоненты должны попадать уже готовые к выводу данные.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## dispatch
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Функция `connect` пробрасывает в компонент дополнительные свойства. Самое важное из них - функция `dispatch`. Эта функция работает точь-в-точь как и `store.dispatch`. Ей нужно передать действие, что в свою очередь запустит цепочку вызовов до перерисовки. Полный код компонента ниже:
 
-### Code Splitting
+    // components/TasksBox.jsx
+    import React from 'react';
+    import { connect } from 'react-redux';
+    import { addTask } from '../actions.jsx';
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+    const mapStateToProps = state => {
+      const props = {
+        tasks: state.tasks,
+      }
+      return props;
+    };
 
-### Analyzing the Bundle Size
+    class TasksBox extends React.Component {
+      handleAddTask = (e) => {
+        e.preventDefault();
+        // dispatch!
+        const { dispatch, newTaskText } = this.props;
+        dispatch(addTask({ text: newTaskText }));
+      };
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+      render() {
+        return <div>{/* logic with this.handleAddTask */}</div>;
+      }
+    }
 
-### Making a Progressive Web App
+    export default connect(mapStateToProps)(TasksBox);
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+## Файловая структура
 
-### Advanced Configuration
+Имея такое количество сущностей, возникает закономерный вопрос: как их раскладывать в файловой системе. Обычно делают так:
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+    actions/index.js
+    components/App.jsx
+    reducers/index.js
+    index.jsx
