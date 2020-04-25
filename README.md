@@ -4,7 +4,7 @@
 
 Команда Redux создала библиотеку [react-redux](https://react-redux.js.org/introduction/quick-start), которая значительно упрощает привязку Redux к React. Далее мы пройдём все этапы по её подключению к React-проекту.
 
-![React Redux](https://cdn2.hexlet.io/derivations/image/original/eyJpZCI6IjkxYzliMWE4Mjg0MjE5YjkzZmJjMzU1MWRjYTUwYmUyLmpwZyIsInN0b3JhZ2UiOiJjYWNoZSJ9?signature=dc5e753abe2eb12afc1dd6b10e85b1daa477e54e29e3fd491933b8062ee71ae1)
+![React Redux](https://coursehunters.online/uploads/default/original/1X/0c65de1fd60a5eff786cd9598fea1fe5cea36617.png)
 
 _Редьюсеры и действия в этом руководстве не описываются. Их структура не зависит от того, с чем интегрируется Redux._
 
