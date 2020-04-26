@@ -3,11 +3,14 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import * as actions from '../actions';
 
-const mapStateToProps = ({ text }) => {
-  const props = {
-    text,
-  };
-  return props;
+const mapStateToProps = (state) => {
+  const { taskText } = state;
+  return { text: taskText };
+};
+
+const actionCreators = {
+  updateNewTaskText: actions.updateNewTaskText,
+  addTask: actions.addTask,
 };
 
 class newTaskForm extends React.Component {
@@ -15,13 +18,12 @@ class newTaskForm extends React.Component {
     e.preventDefault();
     const { text, addTask } = this.props;
     const task = { text, id: _.uniqueId() };
-    addTask(task);
+    addTask({task});
   };
 
   handleUpdateNewTaskText = (e) => {
-    e.preventDefault();
     const { updateNewTaskText } = this.props;
-    updateNewTaskText(e.target.value);
+    updateNewTaskText({text: e.target.value});
   };
 
   render() {
@@ -32,18 +34,17 @@ class newTaskForm extends React.Component {
         <div className="form-group mx-sm-3">
           <input
             type="text"
+            data-testid="input"
             required
             value={text}
-            s
             onChange={this.handleUpdateNewTaskText}
           />
         </div>
-        <button type="submit" className="btn btn-primary btn-sm">
-          Add
-        </button>
+        <input type="submit" data-testid="submit" value="Add" className="btn btn-primary btn-sm" />
+       
       </form>
     );
   }
 }
 
-export default connect(mapStateToProps, actions)(newTaskForm);
+export default connect(mapStateToProps, actionCreators)(newTaskForm);

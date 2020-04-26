@@ -2,9 +2,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../actions';
 
-const mapStateToProps = ({ tasks }) => {
-  const props = { tasks };
-  return props;
+const mapStateToProps = (state) => {
+  const { tasks } = state;
+  return { tasks };
 };
 
 const actionCreators = {
@@ -14,7 +14,7 @@ const actionCreators = {
 class Tasks extends React.Component {
   handleRemoveTask = (id) => () => {
     const { removeTask } = this.props;
-    removeTask(id);
+    removeTask({ id });
   };
 
   render() {
@@ -22,20 +22,26 @@ class Tasks extends React.Component {
 
     if (tasks.length === 0) {
       return null;
-    }    
+    }
+
     return (
       <div className="mt-3">
-      <ul className="list-group">
-        {tasks.map(({ id, text }) => (
-          <li key={id} className="list-group-item d-flex">
-            <span className="mr-auto">{text}</span>
-            <button type="button" className="close" onClick={this.handleRemoveTask(id)}>
-              <span>&times;</span>
-            </button>
-          </li>
-        ))}
-      </ul>
-    </div>);
+        <ul className="list-group">
+          {tasks.map(({ id, text }) => (
+            <li key={id} className="list-group-item d-flex">
+              <span className="mr-auto">{text}</span>
+              <button
+                type="button"
+                className="close"
+                onClick={this.handleRemoveTask(id)}
+              >
+                <span>&times;</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
   }
 }
 
