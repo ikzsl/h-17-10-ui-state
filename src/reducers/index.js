@@ -1,23 +1,46 @@
+import _ from 'lodash';
 import { combineReducers } from 'redux';
 import { handleActions } from 'redux-actions';
+import * as actions from '../actions/index.js';
 
-import * as actions from '../actions';
-
-const taskText = handleActions(
-  {
-    [actions.updateNewTaskText]: (state, { payload: { text } }) => text,
-    [actions.addTask]: () => '',
+const tasks = handleActions({
+  [actions.addTask](state, { payload: { task } }) {
+    const { byId, allIds } = state;
+    return {
+      byId: { ...byId, [task.id]: task },
+      allIds: [task.id, ...allIds],
+    };
   },
-  ''
-);
-
-const tasks = handleActions(
-  {
-    [actions.addTask]: (state, { payload: { task } }) => [task, ...state],
-    [actions.removeTask]: (state, { payload: { id } }) =>
-      state.filter((task) => task.id !== id),
+  [actions.removeTask](state, { payload: { id } }) {
+    const { byId, allIds } = state;
+    return {
+      byId: _.omit(byId, id),
+      allIds: _.without(allIds, id),
+    };
   },
-  []
-);
+  // BEGIN
+  [actions.toggleTaskState](state, { payload: { id } }) {
+    const task = state.byId[id];
+    const newState = (task.state === 'active') ? 'finished' : 'active';
+    const updatedTask = { ...task, state: newState };
+    return {
+      ...state,
+      byId: { ...state.byId, [task.id]: updatedTask },
+    };
+  },
+  // END
+}, { byId: {}, allIds: [] });
 
-export default combineReducers({ taskText, tasks });
+const text = handleActions({
+  [actions.addTask]() {
+    return '';
+  },
+  [actions.updateNewTaskText](_state, { payload }) {
+    return payload.text;
+  },
+}, '');
+
+export default combineReducers({
+  tasks,
+  text,
+});

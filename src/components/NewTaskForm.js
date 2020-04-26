@@ -1,11 +1,15 @@
+// @ts-check
+
 import React from 'react';
-import { connect } from 'react-redux';
 import _ from 'lodash';
-import * as actions from '../actions';
+import { connect } from 'react-redux';
+import * as actions from '../actions/index.js';
 
 const mapStateToProps = (state) => {
-  const { taskText } = state;
-  return { text: taskText };
+  const props = {
+    text: state.text,
+  };
+  return props;
 };
 
 const actionCreators = {
@@ -13,17 +17,17 @@ const actionCreators = {
   addTask: actions.addTask,
 };
 
-class newTaskForm extends React.Component {
+class NewTaskForm extends React.Component {
   handleAddTask = (e) => {
     e.preventDefault();
-    const { text, addTask } = this.props;
-    const task = { text, id: _.uniqueId() };
-    addTask({task});
+    const { addTask, text } = this.props;
+    const task = { text, id: _.uniqueId(), state: 'active' };
+    addTask({ task });
   };
 
   handleUpdateNewTaskText = (e) => {
     const { updateNewTaskText } = this.props;
-    updateNewTaskText({text: e.target.value});
+    updateNewTaskText({ text: e.target.value });
   };
 
   render() {
@@ -34,17 +38,15 @@ class newTaskForm extends React.Component {
         <div className="form-group mx-sm-3">
           <input
             type="text"
-            data-testid="input"
             required
             value={text}
             onChange={this.handleUpdateNewTaskText}
           />
         </div>
-        <input type="submit" data-testid="submit" value="Add" className="btn btn-primary btn-sm" />
-       
+        <input type="submit" className="btn btn-primary btn-sm" value="Add" />
       </form>
     );
   }
 }
 
-export default connect(mapStateToProps, actionCreators)(newTaskForm);
+export default connect(mapStateToProps, actionCreators)(NewTaskForm);

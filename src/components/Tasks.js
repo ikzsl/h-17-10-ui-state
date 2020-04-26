@@ -1,20 +1,29 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import * as actions from '../actions';
+import * as actions from '../actions/index.js';
 
+// BEGIN
 const mapStateToProps = (state) => {
-  const { tasks } = state;
+  const { tasks: { byId, allIds } } = state;
+  const tasks = allIds.map((id) => byId[id]);
   return { tasks };
 };
+// END
 
 const actionCreators = {
   removeTask: actions.removeTask,
+  toggleTaskState: actions.toggleTaskState,
 };
 
 class Tasks extends React.Component {
   handleRemoveTask = (id) => () => {
     const { removeTask } = this.props;
     removeTask({ id });
+  };
+
+  handleToggleTaskState = (id) => () => {
+    const { toggleTaskState } = this.props;
+    toggleTaskState({ id });
   };
 
   render() {
@@ -27,14 +36,14 @@ class Tasks extends React.Component {
     return (
       <div className="mt-3">
         <ul className="list-group">
-          {tasks.map(({ id, text }) => (
+          {tasks.map(({ id, text, state }) => (
             <li key={id} className="list-group-item d-flex">
-              <span className="mr-auto">{text}</span>
-              <button
-                type="button"
-                className="close"
-                onClick={this.handleRemoveTask(id)}
-              >
+              <span className="mr-auto">
+                <a href="#" data-test="task-toggle-state" onClick={this.handleToggleTaskState(id)}>
+                  {state === 'active' ? text : <s>{text}</s>}
+                </a>
+              </span>
+              <button type="button" data-test="task-remove" className="close" onClick={this.handleRemoveTask(id)}>
                 <span>&times;</span>
               </button>
             </li>
