@@ -24,7 +24,7 @@ export const addUser = createAction('USER_ADD');
 
 Функция handleActions принимает объект, где ключами являются действия, а значением обработчики, устанавливающие свойство payload
 
-```javaskript
+```javascript
 import { handleActions } from 'redux-actions';
 import { addUser } from './actions.jsx';
 ​
@@ -45,7 +45,7 @@ export default combineReducers({
 
 Далее уже привычным образом в функцию createStore из Redux передаются редьюсеры, а функции действий используются при вызовах store.dispatch:
 
-```javaskript
+```javascript
 import { addUser } from './actions.jsx'
 import reducers from './reducers.jsx'
 
@@ -55,23 +55,23 @@ store.dispatch(addUser({ user }));
 ```
 
 >Примечание:
->
+
 >Как вы могли заметить, в качестве ключа объекта для функции handleActions выступает функция, полученная из createAction на >самом же деле эта запись аналогична такой:
 
 ```javaskript
->const actionsHandlers = {
->  'ADD_TASK': (state) => (/* handler */)
->};
+const actionsHandlers = {
+  'ADD_TASK': (state) => (/* handler */)
+};
 ```
 
 >Такое поведение возможно благодаря внутреннему устройству функции createAction, если её сильно упростить, получится примерно >следующее:
 
 ```javaskript
->const createAction = (type) => {
->  const actionCreator = (payload) => ({ type, payload });
->  actionCreator.toString = () => type; // black magic here
->  return actionCreator;
->};
+const createAction = (type) => {
+  const actionCreator = (payload) => ({ type, payload });
+  actionCreator.toString = () => type; // black magic here
+  return actionCreator;
+};
 ```
 
 На первый взгляд может показаться, что кода стало больше, но на самом деле его столько же. Но появились и плюшки:
