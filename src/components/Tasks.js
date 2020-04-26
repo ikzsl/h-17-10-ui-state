@@ -1,30 +1,52 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import cn from 'classnames';
 import * as actions from '../actions/index.js';
 
-// BEGIN
 const mapStateToProps = (state) => {
-  const { tasks: { byId, allIds } } = state;
-  const tasks = allIds.map((id) => byId[id]);
-  return { tasks };
+  // BEGIN
+  const { tasks: { byId, allIds }, tasksUIState } = state;
+  const tasks = allIds.map(id => byId[id]);
+  return { tasks, tasksUIState };
+  // END
 };
-// END
 
 const actionCreators = {
-  removeTask: actions.removeTask,
-  toggleTaskState: actions.toggleTaskState,
+  inverseTaskTheme: actions.inverseTaskTheme,
 };
 
 class Tasks extends React.Component {
-  handleRemoveTask = (id) => () => {
-    const { removeTask } = this.props;
-    removeTask({ id });
+  // BEGIN
+  handleInverseTaskTheme = task => (e) => {
+    e.preventDefault();
+    const { inverseTaskTheme } = this.props;
+    inverseTaskTheme({ task });
   };
 
-  handleToggleTaskState = (id) => () => {
-    const { toggleTaskState } = this.props;
-    toggleTaskState({ id });
-  };
+  renderTask = (task) => {
+    const { tasksUIState } = this.props;
+
+    const themeToClasses = {
+      dark: 'bg-dark text-light',
+      light: 'bg-light text-dark',
+    };
+
+
+    const currentThemeClass = themeToClasses[tasksUIState[task.id].theme];
+
+    const classes = cn({
+      'list-group-item d-flex': true,
+      [currentThemeClass]: true,
+    });
+
+    return (
+      <li key={task.id} className={classes}>
+        <span className="mr-auto">
+          <a href="#" onClick={this.handleInverseTaskTheme(task)}>{task.text}</a>
+        </span>
+      </li>
+    );
+  }
 
   render() {
     const { tasks } = this.props;
@@ -36,22 +58,12 @@ class Tasks extends React.Component {
     return (
       <div className="mt-3">
         <ul className="list-group">
-          {tasks.map(({ id, text, state }) => (
-            <li key={id} className="list-group-item d-flex">
-              <span className="mr-auto">
-                <a href="#" data-test="task-toggle-state" onClick={this.handleToggleTaskState(id)}>
-                  {state === 'active' ? text : <s>{text}</s>}
-                </a>
-              </span>
-              <button type="button" data-test="task-remove" className="close" onClick={this.handleRemoveTask(id)}>
-                <span>&times;</span>
-              </button>
-            </li>
-          ))}
+          {tasks.map(this.renderTask)}
         </ul>
       </div>
     );
   }
+  // END
 }
 
 export default connect(mapStateToProps, actionCreators)(Tasks);
