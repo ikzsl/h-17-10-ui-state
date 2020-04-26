@@ -1,50 +1,43 @@
-Реализуйте приложение "список задач", которое умеет две вещи:
 
-1. Добавлять задачи в список
-2. Удалять задачи из списка
-## src/index.jsx
-Оберните приложение в провайдер и примонтируйте к элементу с идентификатором container.
+Реализуйте компонент <Panel />, который добавит в наше приложение две кнопки:
 
-## src/actions/index.js
+. Generate - создает 5 новых (и случайных) задач взамен уже добавленных
+. Clean - очищает текущий список задач
+
+## actions/index.js
 Реализуйте необходимые действия.
 
-## src/reducers/index.js
+## reducers/index.js
+Реализуйте необходимые обработчики.
+
+## components/Panel.js
 Реализуйте необходимую логику.
 
-## src/components/App.jsx
-Реализуйте компонент <App>
+## components/Tasks.js
+Реализуйте компонент <Tasks />, отвечающий за вывод добавленных задач.
 
-## HTML Начальный
+Для создания новой задачи используйте такую конструкцию:
+
+{ id: _.uniqueId(), text: faker.lorem.sentence() };
+
+## HTML
+
 <div class="col-5">
   <form action="" class="form-inline">
     <div class="form-group mx-sm-3">
-      <input type="text" required value="">
+      <input type="text" required="" value="">
     </div>
-    <button type="submit" class="btn btn-primary btn-sm">Add</button>
+    <input type="submit" class="btn btn-primary btn-sm" value="Add">
   </form>
-</div>
-
-## HTML после добавления двух задач
-<div class="col-5">
-  <form action="" class="form-inline">
-    <div class="form-group mx-sm-3">
-      <input type="text" required value="">
-    </div>
-    <button type="submit" class="btn btn-primary btn-sm">Add</button>
-  </form>
+  <div class="py-3">
+    <button type="button" data-test="clean" class="btn btn-warning btn-sm mr-3">Clean</button>
+    <button type="button" data-test="generate" class="btn btn-primary btn-sm">Generate</button>
+  </div>
   <div class="mt-3">
     <ul class="list-group">
       <li class="list-group-item d-flex">
-        <span class="mr-auto">second Task!</span>
-        <button type="button" class="close">
-          <span>&times;</span>
-        </button>
-      </li>
-      <li class="list-group-item d-flex">
-        <span class="mr-auto">first Task!</span>
-        <button type="button" class="close">
-          <span>&times;</span>
-        </button>
+        <span class="mr-auto">Quia voluptatem quia et vel assumenda rerum quas.</span>
+        <button type="button" class="close"><span>×</span></button>
       </li>
     </ul>
   </div>

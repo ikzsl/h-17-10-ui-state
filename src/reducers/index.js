@@ -21,6 +21,9 @@ const tasks = (state = [], action) => {
     case 'TASK_ADD': {
       return [action.payload.task, ...state];
     }
+    case 'CLEAN': {
+      return [];
+    }
     default:
       return state;
   }
