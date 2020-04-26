@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^7.2.1",
     "lodash": "*",
     "faker": "*",
+    "js-polyfills": "*",
     "redux": "*",
     "redux-actions": "*",
     "react-redux": "*",

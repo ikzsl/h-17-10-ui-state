@@ -21,8 +21,11 @@ const tasks = (state = [], action) => {
     case 'TASK_ADD': {
       return [action.payload.task, ...state];
     }
-    case 'CLEAN': {
+    case 'TASK_CLEAN': {
       return [];
+    }
+    case 'TASK_REPLACE': {
+      return action.payload.tasks;
     }
     default:
       return state;

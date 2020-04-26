@@ -19,6 +19,13 @@ export const removeTask = (id) => ({
   },
 });
 
-export const clean = () => ({
-  type: 'CLEAN',
+export const cleanTasks = () => ({
+  type: 'TASK_CLEAN',
+});
+
+export const replaceTasksBy = (tasks) => ({
+  type: 'TASK_REPLACE',
+  payload: {
+    tasks,
+  },
 });

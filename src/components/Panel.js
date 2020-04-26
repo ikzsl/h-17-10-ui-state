@@ -1,78 +1,39 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import faker from '../faker';
 import * as actions from '../actions';
 
-const mapStateToProps = ({ tasks, text }) => {
-  const props = {
-    tasks,
-    text,
-  };
-  return props;
-};
-
-
-class Tasks extends React.Component {
-  handleChangeText = (e) => {
-    e.preventDefault();
-    const newTaskText = e.target.value;
-    const { updateNewTaskText} = this.props;
-    updateNewTaskText(newTaskText);
+const actionCreators = {
+    cleanTasks: actions.cleanTasks,
+    replaceTasksBy: actions.replaceTasksBy,
   };
 
-  handleAddTask = (e) => {
-    e.preventDefault();
-    const { text, addTask } = this.props;
-    const task = { text, id: _.uniqueId() };
-    addTask(task);
-  };
 
-  handleRemoveTask = (id) => {
-    const { removeTask } = this.props;
-    removeTask(id);
-  };
+class Panel extends React.Component {
+    handleCleanTasks = () => {
+        const {cleanTasks} = this.props;
+        cleanTasks();
+    }
+
+    handleGenerateSamples = () => {
+        const { replaceTasksBy } = this.props;
+        const getNewTask = () => ({ id: _.uniqueId(), text: faker.lorem.sentence() });
+        const newTasks = _.times(5, getNewTask);
+        replaceTasksBy(newTasks);
+      };
+
+
+
 
   render() {
-    const { tasks, text } = this.props;
-    console.log(tasks);
-    const tasksListItems = tasks.map((task) => (
-      <li className="list-group-item d-flex" key={task.id}>
-        <span className="mr-auto">{task.text}</span>
-        <button
-          type="button"
-          className="close"
-          onClick={() => this.handleRemoveTask(task.id)}
-        >
-          <span>&times;</span>
-        </button>
-      </li>
-    ));
-
-    const tasksList = (
-      <div className="mt-3">
-        <ul className="list-group">{tasksListItems}</ul>
-      </div>
-    );
-
     return (
-      <div className="col-5">
-        <form action="" className="form-inline" onSubmit={this.handleAddTask}>
-          <div className="form-group mx-sm-3">
-            <input
-              type="text"
-              required
-              value={text}
-              onChange={this.handleChangeText}
-            />
-          </div>
-          <button type="submit" className="btn btn-primary btn-sm">
-            Add
-          </button>
-        </form>
-        {tasks.length > 0 ? tasksList : null}
+        <div className="py-3">
+        <button type="button" data-test="clean" className="btn btn-warning btn-sm mr-3" onClick={this.handleCleanTasks}>Clean</button>
+        <button type="button" data-test="generate" className="btn btn-primary btn-sm" onClick={this.handleGenerateSamples}>Generate</button>
       </div>
     );
   }
 }
 
-export default connect(mapStateToProps, actions)(Tasks);
+export default connect(null, actionCreators)(Panel);
