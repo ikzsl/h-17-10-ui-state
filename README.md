@@ -55,17 +55,17 @@ store.dispatch(addUser({ user }));
 ```
 
 >Примечание:
-
+>
 >Как вы могли заметить, в качестве ключа объекта для функции handleActions выступает функция, полученная из createAction на >самом же деле эта запись аналогична такой:
-
+>
 ```javaskript
 const actionsHandlers = {
   'ADD_TASK': (state) => (/* handler */)
 };
 ```
-
+>
 >Такое поведение возможно благодаря внутреннему устройству функции createAction, если её сильно упростить, получится примерно >следующее:
-
+>
 ```javaskript
 const createAction = (type) => {
   const actionCreator = (payload) => ({ type, payload });
