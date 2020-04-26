@@ -1,17 +1,15 @@
 {
-  "name": "h-17-8-redux-actions",
+  "name": "h-17-9-shape-state",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@testing-library/react": "^9.5.0",
     "lodash": "*",
-    "js-polyfills": "*",
     "redux": "*",
-    "redux-actions": "*",
+    "react": "*",
     "react-redux": "*",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "react-scripts": "3.4.1",
+    "js-polyfills": "*",
+    "redux-actions": "*",
+    "react-dom": "*",
     "reselect": "*"
   },
   "scripts": {
